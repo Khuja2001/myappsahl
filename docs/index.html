@@ -1,1 +1,362 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Sahl — общая память для друзей и семьи. Собирайте фото и видео с каждого события в одном месте.">
+<title>Sahl — Ваша общая память</title>
+<style>
+:root{
+  --bg:#f7f8f4;
+  --surface:#ffffff;
+  --ink:#171a18;
+  --muted:#69706b;
+  --line:#e5e9e4;
+  --accent:#172d25;
+  --accent-2:#c9f36d;
+  --soft:#edf4e8;
+  --shadow:0 24px 70px rgba(23,45,37,.10);
+  --radius:28px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--bg); color:var(--ink); line-height:1.5;
+  overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit}
+.container{width:min(1160px,calc(100% - 40px));margin:auto}
+.nav{
+  height:78px;display:flex;align-items:center;justify-content:space-between;
+}
+.logo{font-size:27px;font-weight:800;letter-spacing:-1.5px}
+.logo span{color:#6c8b5c}
+.nav-links{display:flex;gap:30px;color:var(--muted);font-size:14px}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{
+  padding:11px 18px;border:1px solid var(--line);border-radius:999px;
+  background:#fff;font-weight:650;font-size:14px;
+}
+.hero{padding:68px 0 100px;position:relative}
+.hero-grid{display:grid;grid-template-columns:1.03fr .97fr;gap:70px;align-items:center}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;
+  background:var(--soft);font-size:13px;font-weight:700;color:#426047;margin-bottom:22px;
+}
+.dot{width:7px;height:7px;background:#82a96c;border-radius:50%}
+h1{font-size:clamp(48px,6vw,78px);line-height:.98;letter-spacing:-4px;max-width:720px}
+.hero h1 em{font-style:normal;color:#708a63}
+.hero-copy{font-size:18px;color:var(--muted);max-width:630px;margin:28px 0}
+.signup{
+  display:flex;max-width:540px;background:#fff;padding:6px;border:1px solid var(--line);
+  border-radius:16px;box-shadow:0 12px 35px rgba(0,0,0,.05);
+}
+.signup input{flex:1;min-width:0;border:0;outline:0;padding:14px 15px;background:transparent;color:var(--ink)}
+.signup button{
+  border:0;background:var(--accent);color:#fff;padding:14px 22px;border-radius:12px;
+  font-weight:750;cursor:pointer;transition:.2s;
+}
+.signup button:hover{transform:translateY(-1px);background:#243e33}
+.form-note{font-size:12px;color:#929892;margin:11px 4px}
+.success{display:none;color:#4e744b;font-size:14px;font-weight:650;margin-top:10px}
+.countdown{display:flex;gap:10px;margin-top:28px}
+.timebox{background:#fff;border:1px solid var(--line);border-radius:14px;min-width:66px;padding:9px 10px;text-align:center}
+.timebox b{display:block;font-size:20px}.timebox span{font-size:10px;color:var(--muted);text-transform:uppercase}
+.phone-wrap{position:relative;display:flex;justify-content:center}
+.glow{
+  position:absolute;width:430px;height:430px;border-radius:50%;
+  background:radial-gradient(circle,#dcefc6 0%,rgba(220,239,198,0) 68%);z-index:0;
+}
+.phone{
+  width:295px;height:600px;border:9px solid #1a211d;border-radius:43px;background:#f5f7f3;
+  box-shadow:0 30px 80px rgba(20,40,31,.22);position:relative;z-index:1;overflow:hidden;
+}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:108px;height:24px;background:#1a211d;border-radius:0 0 17px 17px;z-index:3}
+.app-top{padding:45px 18px 12px;display:flex;justify-content:space-between;align-items:center}
+.app-top strong{font-size:22px;letter-spacing:-1px}.plus{font-size:25px}
+.group-title{padding:8px 18px 16px}.group-title h3{font-size:17px}.group-title p{font-size:11px;color:#8b938d}
+.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:0 8px}
+.photo{
+  aspect-ratio:1;border-radius:7px;
+  background:linear-gradient(135deg,#d9e6c9,#879b7a);
+  overflow:hidden;position:relative;
+}
+.photo:nth-child(2){background:linear-gradient(135deg,#e5cbb5,#8c6d59)}
+.photo:nth-child(3){background:linear-gradient(135deg,#b8ced1,#547078)}
+.photo:nth-child(4){background:linear-gradient(135deg,#ddd3ae,#877a4c)}
+.photo:nth-child(5){background:linear-gradient(135deg,#c5b9cf,#74627f)}
+.photo:nth-child(6){background:linear-gradient(135deg,#b9d4b1,#577251)}
+.photo:nth-child(7){background:linear-gradient(135deg,#e3b9aa,#875a4d)}
+.photo:nth-child(8){background:linear-gradient(135deg,#c5d7e3,#607a8b)}
+.photo:nth-child(9){background:linear-gradient(135deg,#d8d5bc,#85815f)}
+.photo:after{
+  content:"";position:absolute;inset:18% 18% 0;
+  border-radius:50% 50% 0 0;background:rgba(255,255,255,.18);
+}
+.app-bottom{position:absolute;bottom:0;left:0;right:0;height:60px;background:#fff;border-top:1px solid #e6e9e5;display:flex;justify-content:space-around;align-items:center;font-size:12px;color:#7b837c}
+.app-bottom b{color:#263b30}
+.section{padding:105px 0}
+.section-head{max-width:720px;margin-bottom:55px}
+.kicker{color:#78906d;font-size:13px;text-transform:uppercase;letter-spacing:1.5px;font-weight:800;margin-bottom:12px}
+h2{font-size:clamp(36px,4vw,56px);line-height:1.03;letter-spacing:-2.5px}
+.lead{font-size:18px;color:var(--muted);margin-top:18px}
+.problem{background:#fff}
+.problem-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:80px}
+.problem-list{display:grid;gap:16px}
+.problem-card{padding:22px 0;border-bottom:1px solid var(--line);display:flex;gap:16px}
+.problem-icon{font-size:22px}.problem-card p{color:var(--muted)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.step{
+  background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:32px;
+  min-height:260px;transition:.25s;
+}
+.step:hover{transform:translateY(-5px);box-shadow:var(--shadow)}
+.num{
+  width:44px;height:44px;border-radius:14px;background:var(--accent);color:#fff;
+  display:grid;place-items:center;font-weight:800;margin-bottom:55px;
+}
+.step h3{font-size:21px;margin-bottom:10px}.step p{color:var(--muted);font-size:15px}
+.features{background:#f0f4ed}
+.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.feature{
+  background:#fff;border:1px solid #e2e8df;border-radius:22px;padding:25px;min-height:180px;
+}
+.feature-icon{font-size:28px;margin-bottom:25px}.feature h3{font-size:17px;margin-bottom:6px}.feature p{color:var(--muted);font-size:14px}
+.quote-section{background:var(--accent);color:#fff}
+.quote-section .kicker{color:#b4ce9c}.quote-section .lead{color:#c4ccc7}
+.waiting{
+  display:flex;align-items:center;justify-content:space-between;gap:30px;
+  padding:34px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);
+  border-radius:24px;margin-top:40px;
+}
+.waiting strong{font-size:26px}.waiting span{display:block;color:#c1cac4;font-size:14px;margin-top:5px}
+.badge-count{font-size:44px;font-weight:850;letter-spacing:-2px;white-space:nowrap}
+.cta{text-align:center;padding:120px 0}
+.cta .lead{max-width:650px;margin:20px auto 32px}
+.cta .signup{margin:auto;text-align:left}
+footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-size:13px}
+.footer-inner{display:flex;justify-content:space-between;gap:20px;align-items:center}
+.footer-links{display:flex;gap:20px}.footer-links a:hover{color:var(--ink)}
+.modal{
+  position:fixed;inset:0;background:rgba(10,15,12,.5);display:none;align-items:center;justify-content:center;
+  z-index:20;padding:20px;backdrop-filter:blur(8px)
+}
+.modal.open{display:flex}
+.modal-card{background:#fff;border-radius:26px;padding:35px;max-width:440px;width:100%;box-shadow:var(--shadow);text-align:center}
+.modal-card .check{font-size:45px;margin-bottom:12px}.modal-card h3{font-size:27px}.modal-card p{color:var(--muted);margin:10px 0 25px}
+.close{border:0;background:var(--accent);color:#fff;padding:12px 22px;border-radius:12px;cursor:pointer;font-weight:700}
+@media(max-width:850px){
+  .nav-links{display:none}.nav-cta{display:none}
+  .hero{padding-top:35px}.hero-grid{grid-template-columns:1fr;gap:50px}
+  h1{letter-spacing:-2.5px}.phone{width:270px;height:550px}
+  .problem-grid{grid-template-columns:1fr;gap:40px}.steps,.feature-grid{grid-template-columns:1fr}
+  .step{min-height:0}.num{margin-bottom:35px}
+  .waiting{flex-direction:column;align-items:flex-start}.badge-count{font-size:36px}
+}
+@media(max-width:520px){
+  .container{width:min(100% - 28px,1160px)}
+  .hero{padding-bottom:70px}.section{padding:75px 0}
+  h1{font-size:45px}.hero-copy{font-size:16px}
+  .signup{flex-direction:column;background:transparent;border:0;box-shadow:none;padding:0;gap:8px}
+  .signup input{background:#fff;border:1px solid var(--line);border-radius:13px;padding:15px}
+  .signup button{width:100%}
+  .countdown{gap:6px}.timebox{min-width:57px}
+  h2{letter-spacing:-1.5px}.footer-inner{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
 
+<header>
+  <div class="container nav">
+    <a class="logo" href="#">Sahl<span>.</span></a>
+    <nav class="nav-links">
+      <a href="#problem">Проблема</a>
+      <a href="#how">Как работает</a>
+      <a href="#features">Преимущества</a>
+    </nav>
+    <a class="nav-cta" href="#signup">Получить приглашение</a>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <div class="eyebrow"><span class="dot"></span> Скоро бета-запуск</div>
+      <h1>Sahl. Ваша общая <em>память</em> — всегда под рукой</h1>
+      <p class="hero-copy">Забудьте о пересылках фото и видео через мессенджеры. Создайте группу для события, добавьте друзей и семью — и все снимки сразу оказываются у всех.</p>
+
+      <form class="signup" id="signupForm">
+        <input type="email" placeholder="Ваш email" required aria-label="Ваш email">
+        <button type="submit">Хочу попробовать</button>
+      </form>
+      <div class="success" id="successTop">✓ Спасибо! Мы пришлём приглашение на бета-запуск.</div>
+      <div class="form-note">Никакого спама. Только приглашение в Sahl и важные новости.</div>
+
+      <div class="countdown" aria-label="Таймер до запуска">
+        <div class="timebox"><b id="days">30</b><span>дней</span></div>
+        <div class="timebox"><b id="hours">00</b><span>часов</span></div>
+        <div class="timebox"><b id="mins">00</b><span>минут</span></div>
+        <div class="timebox"><b id="secs">00</b><span>секунд</span></div>
+      </div>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="glow"></div>
+      <div class="phone" aria-label="Макет приложения Sahl">
+        <div class="notch"></div>
+        <div class="app-top"><strong>Sahl.</strong><span class="plus">＋</span></div>
+        <div class="group-title"><h3>Поездка на море</h3><p>12 участников · 248 фото</p></div>
+        <div class="photos">
+          <div class="photo"></div><div class="photo"></div><div class="photo"></div>
+          <div class="photo"></div><div class="photo"></div><div class="photo"></div>
+          <div class="photo"></div><div class="photo"></div><div class="photo"></div>
+        </div>
+        <div class="app-bottom"><b>⌂ Группы</b><span>＋ Добавить</span><span>☻ Профиль</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section problem" id="problem">
+  <div class="container problem-grid">
+    <div class="section-head">
+      <div class="kicker">Знакомо?</div>
+      <h2>Воспоминания не должны быть разбросаны по телефонам.</h2>
+      <p class="lead">После каждой встречи, дня рождения или поездки у всех остаются свои фото. Собрать их вместе почему-то всегда сложнее, чем сделать.</p>
+    </div>
+    <div class="problem-list">
+      <div class="problem-card"><div class="problem-icon">💬</div><div><h3>Мессенджеры</h3><p>Нужно пересылать десятки файлов, качество может снижаться, для просмотра необходимо скачивать каждый файл в память телефона, а старые файлы легко потерять.</p></div></div>
+      <div class="problem-card"><div class="problem-icon">📡</div><div><h3>Share приложения через Wi-fi и Bluetooth</h3><p>Долго, неудобно и работает только когда все находятся рядом.</p></div></div>
+      <div class="problem-card"><div class="problem-icon">☁️</div><div><h3>Общие альбомы</h3><p>Настройка может быть сложной, а не всем хочется разбираться в новых сервисах.</p></div></div>
+      <div class="problem-card"><div class="problem-icon">📱</div><div><h3>Итог</h3><p>Общие воспоминания остаются разбросанными по чужим телефонам.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="how">
+  <div class="container">
+    <div class="section-head">
+      <div class="kicker">Как работает Sahl?</div>
+      <h2>Просто. Всего 3 шага.</h2>
+      <p class="lead">Sahl задуман так, чтобы работать почти как обычная галерея телефона — только общая для всех участников.</p>
+    </div>
+    <div class="steps">
+      <article class="step"><div class="num">01</div><h3>Создайте группу</h3><p>Нажмите «+» и назовите её: «Поездка на море», «Семейный ужин» или любое другое событие.</p></article>
+      <article class="step"><div class="num">02</div><h3>Пригласите участников</h3><p>Отправьте ссылку друзьям, семье или коллегам — они присоединятся в один клик.</p></article>
+      <article class="step"><div class="num">03</div><h3>Загружайте и смотрите</h3><p>Все фото и видео появляются в общей ленте. Смотрите и скачивайте в оригинальном качестве.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="section features" id="features">
+  <div class="container">
+    <div class="section-head">
+      <div class="kicker">Почему Sahl?</div>
+      <h2>Общая галерея без лишних сложностей.</h2>
+    </div>
+    <div class="feature-grid">
+      <article class="feature"><div class="feature-icon">📱</div><h3>Как родная галерея</h3><p>Привычный интерфейс. Не нужно учиться пользоваться новым сложным сервисом.</p></article>
+      <article class="feature"><div class="feature-icon">⚡</div><h3>Мгновенный просмотр</h3><p>Фото открываются быстро, чтобы вы просто смотрели, а не ждали.</p></article>
+      <article class="feature"><div class="feature-icon">💎</div><h3>Оригинальное качество</h3><p>Скачивайте фотографии и видео без потери качества.</p></article>
+      <article class="feature"><div class="feature-icon">🌍</div><h3>Для всех платформ</h3><p>Android, iPhone и браузер на компьютере — всё в одном месте.</p></article>
+      <article class="feature"><div class="feature-icon">🔒</div><h3>Только ваши группы</h3><p>Контент доступен участникам группы, а не случайным пользователям.</p></article>
+      <article class="feature"><div class="feature-icon">💰</div><h3>До 100 ГБ бесплатно</h3><p>Большое общее хранилище без платы на старте.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="section quote-section">
+  <div class="container">
+    <div class="kicker">Первые пользователи</div>
+    <h2>«Хочу, чтобы все фото с поездки были в одном месте».</h2>
+    <p class="lead">Мы собираем первых пользователей, чтобы сделать Sahl действительно удобным.</p>
+    <div class="waiting">
+      <div><strong>Уже ждут запуска Sahl</strong><span>Присоединяйтесь к первым пользователям и получите приглашение в бета-версию.</span></div>
+      <div class="badge-count">15000+</div>
+    </div>
+  </div>
+</section>
+
+<section class="cta" id="signup">
+  <div class="container">
+    <div class="kicker">Бета-запуск</div>
+    <h2>Не теряйте воспоминания.</h2>
+    <p class="lead">Sahl — это способ сохранить самые важные моменты, где бы вы ни были. Оставьте email и получите доступ к бета-версии одним из первых.</p>
+    <form class="signup" id="signupFormBottom">
+      <input type="email" placeholder="Введите ваш email" required aria-label="Введите ваш email">
+      <button type="submit">Жду Sahl!</button>
+    </form>
+    <div class="success" id="successBottom">✓ Готово! Когда Sahl будет готов, мы пришлём приглашение.</div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container footer-inner">
+    <div>© 2026 Sahl. Все права защищены.</div>
+    <div class="footer-links">
+      <a href="#" onclick="return false;">Политика конфиденциальности</a>
+      <a href="#" onclick="return false;">Условия использования</a>
+      <a href="mailto:hello@sahl.app">hello@sahl.app</a>
+    </div>
+  </div>
+</footer>
+
+<div class="modal" id="modal">
+  <div class="modal-card">
+    <div class="check">✓</div>
+    <h3>Вы в списке!</h3>
+    <p>Спасибо за интерес к Sahl. Мы сохраним ваш email и сообщим, когда откроется бета-версия.</p>
+    <button class="close" onclick="closeModal()">Отлично</button>
+  </div>
+</div>
+
+<script>
+// Демо-таймер: 30 дней от момента первого открытия страницы.
+// Для реального запуска замените дату в переменной launchDate.
+const launchDate = new Date(Date.now() + 30*24*60*60*1000);
+function updateTimer(){
+  const diff = Math.max(0, launchDate - Date.now());
+  const d = Math.floor(diff/86400000);
+  const h = Math.floor(diff/3600000)%24;
+  const m = Math.floor(diff/60000)%60;
+  const s = Math.floor(diff/1000)%60;
+  document.getElementById('days').textContent=String(d).padStart(2,'0');
+  document.getElementById('hours').textContent=String(h).padStart(2,'0');
+  document.getElementById('mins').textContent=String(m).padStart(2,'0');
+  document.getElementById('secs').textContent=String(s).padStart(2,'0');
+}
+updateTimer(); setInterval(updateTimer,1000);
+
+function showModal(){
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){
+  document.getElementById('modal').classList.remove('open');
+}
+document.getElementById('modal').addEventListener('click',e=>{
+  if(e.target.id==='modal') closeModal();
+});
+
+function handleForm(formId, successId){
+  document.getElementById(formId).addEventListener('submit', function(e){
+    e.preventDefault();
+    const email=this.querySelector('input').value.trim();
+    if(!email) return;
+    // Демо-режим: email никуда не отправляется.
+    // Для реального сбора подключите Formspree, Google Sheets, свой API или backend.
+    localStorage.setItem('sahl_email', email);
+    document.getElementById(successId).style.display='block';
+    this.reset();
+    showModal();
+  });
+}
+handleForm('signupForm','successTop');
+handleForm('signupFormBottom','successBottom');
+</script>
+</body>
+</html>
